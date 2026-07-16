@@ -1,0 +1,12 @@
+.env
+.venv/
+credentials.json
+token.json
+__pycache__/
+*.pyc
+
+# PyInstaller build output
+build/
+dist/
+*.spec
+"Fleur De Lis Outreach.app"

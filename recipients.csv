@@ -1,0 +1,15 @@
+recipient_first_name,recipient_email,property_address,closing_date,renewal_target_date,renewal_month,property_type
+Avery,avery@example.com,"123 Main Street, Baton Rouge, LA 70810",2024-08-14,,08,residential
+Logan,logan@example.com,"456 Commerce Boulevard, Baton Rouge, LA 70808",2023-02-10,2024-08-03,,commercial
+Morgan,morgan@example.com,"789 Cypress Lane, Baton Rouge, LA 70817",2022-08-19,,04,investment
+Taylor,taylor@example.com,"910 Oak Avenue, Baton Rouge, LA 70809",2025-11-19,,11,residential
+Afinah,afinah@example.com,"321 Pine Street, Baton Rouge, LA 70810",2024-09-15,,09,residential
+Jamar,jamar@example.com,"654 Maple Street, Baton Rouge, LA 70808",2023-12-01,,12,residential
+Sydney,sydney@example.com,"987 Birch Road, Baton Rouge, LA 70809",2024-03-22,,03,commercial
+Jordan,jordan@example.com,"321 Cedar Street, Baton Rouge, LA 70810",2024-06-30,,06,residential
+Casey,casey@example.com,"654 Spruce Street, Baton Rouge, LA 70808",2024-01-15,,01,commercial
+Riley,riley@example.com,"987 Elm Street, Baton Rouge, LA 70809",2024-05-20,,05,residential
+Alex,alex@example.com,"123 Walnut Street, Baton Rouge, LA 70810",2024-07-10,,07,residential
+Jamie,jamie@example.com,"456 Chestnut Street, Baton Rouge, LA 70808",2024-10-05,,10,commercial
+Sam,sam@example.com,"789 Pineapple Street, Baton Rouge, LA 70809",2024-11-15,,11,residential
+Drew,drew@example.com,"321 Magnolia Street, Baton Rouge, LA 70810",2024-12-20,,12,commercial

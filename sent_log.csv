@@ -1,0 +1,6 @@
+timestamp,recipient_email,property_address,renewal_cycle,status,message_id,error
+2026-06-22T02:14:15,avery@example.com,"123 Main Street, Baton Rouge, LA 70810",2026-08,demo,demo-no-email-sent,
+2026-06-22T02:14:15,logan@example.com,"456 Commerce Boulevard, Baton Rouge, LA 70808",2026-08-03,demo,demo-no-email-sent,
+2026-06-22T02:15:14,afinah@example.com,"321 Pine Street, Baton Rouge, LA 70810",2026-09,demo,demo-no-email-sent,
+2026-06-22T02:28:54,taylor@example.com,"910 Oak Avenue, Baton Rouge, LA 70809",2026-11,demo,demo-no-email-sent,
+2026-06-22T02:28:54,sam@example.com,"789 Pineapple Street, Baton Rouge, LA 70809",2026-11,demo,demo-no-email-sent,
