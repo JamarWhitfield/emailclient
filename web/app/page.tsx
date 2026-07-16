@@ -554,6 +554,14 @@ export default function Home() {
                 <span className="text-xs font-medium text-app-text-muted flex-1">
                   {workingList.length} recipient(s) — click name to preview
                 </span>
+                {someChecked && (
+                  <button
+                    onClick={() => setCheckedIndexes(new Set())}
+                    className="shrink-0 rounded px-2 py-1 text-xs font-medium text-app-text-muted transition-colors hover:bg-danger-100 hover:text-danger-700"
+                  >
+                    Unselect All
+                  </button>
+                )}
               </div>
 
               <ul role="listbox" aria-label="Recipients" className="flex-1">
