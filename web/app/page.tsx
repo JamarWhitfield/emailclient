@@ -231,7 +231,7 @@ export default function Home() {
           {/* Split pane */}
           <div className="flex flex-1 overflow-hidden">
             {/* Left: recipient list */}
-            <div className="w-80 flex-shrink-0 overflow-y-auto border-r bg-white">
+            <div className="w-[30%] flex-shrink-0 overflow-y-auto border-r bg-white">
               <p className="px-4 py-2 text-xs text-gray-400">{parseResult.eligible.length} recipient(s) — click to preview</p>
               <ul>
                 {parseResult.eligible.map((item, i) => {
@@ -262,7 +262,7 @@ export default function Home() {
             </div>
 
             {/* Right: preview */}
-            <div className="flex-1 overflow-hidden bg-gray-50">
+            <div className="w-[70%] overflow-hidden bg-gray-50">
               {selectedItem ? (
                 <EmailPreviewPanel item={selectedItem} />
               ) : (
