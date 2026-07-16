@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.outreach-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #c6d1cb transparent;
+}
+.outreach-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.outreach-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.outreach-scrollbar::-webkit-scrollbar-thumb {
+  background: #c6d1cb;
+  border: 2px solid transparent;
+  border-radius: 9999px;
+  background-clip: padding-box;
+}
+.outreach-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9fada5;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}

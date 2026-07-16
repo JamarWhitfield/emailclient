@@ -16,40 +16,83 @@ function friendlyMonth(yyyyMM: string): string {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Email preview panel (right pane)
+// ---------------------------------------------------------------------------
 function EmailPreviewPanel({ item }: { item: EligibleRecipient }) {
   const [showHtml, setShowHtml] = useState(false);
+
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-b bg-green-700 px-5 py-4 text-white">
-        <p className="text-xs font-semibold uppercase tracking-wide opacity-75">Email Preview</p>
-        <p className="mt-0.5 truncate font-semibold">{item.recipient.email}</p>
-        <p className="mt-0.5 truncate text-sm opacity-80">Subject: {item.emailContent.subject}</p>
+    <div className="flex h-full flex-col bg-app-surface">
+      {/* Header */}
+      <div className="border-b border-l-4 border-b-brand-200 border-l-brand-600 bg-brand-50 px-6 py-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-600">
+          Email Preview
+        </p>
+        <p className="mt-1 text-base font-semibold text-brand-900">
+          {item.recipient.email}
+        </p>
+        <p className="mt-1 text-sm text-brand-700">
+          Subject: {item.emailContent.subject}
+        </p>
       </div>
-      <div className="flex gap-2 border-b px-5 py-3">
-        <button
-          onClick={() => setShowHtml(false)}
-          className={`rounded px-3 py-1 text-xs font-medium transition ${!showHtml ? "bg-green-700 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+
+      {/* Tab bar */}
+      <div className="border-b border-app-border bg-app-surface px-6 py-3">
+        <div
+          className="inline-flex rounded-lg bg-app-surface-subtle p-1"
+          role="tablist"
+          aria-label="Email format"
         >
-          Plain Text
-        </button>
-        <button
-          onClick={() => setShowHtml(true)}
-          className={`rounded px-3 py-1 text-xs font-medium transition ${showHtml ? "bg-green-700 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
-        >
-          HTML
-        </button>
+          <button
+            role="tab"
+            aria-selected={!showHtml}
+            onClick={() => setShowHtml(false)}
+            className={
+              !showHtml
+                ? "rounded-md bg-app-surface px-4 py-1.5 text-sm font-semibold text-brand-800 shadow-sm ring-1 ring-app-border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1"
+                : "rounded-md px-4 py-1.5 text-sm font-medium text-app-text-muted transition-colors hover:bg-white/70 hover:text-app-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1"
+            }
+          >
+            Plain Text
+          </button>
+          <button
+            role="tab"
+            aria-selected={showHtml}
+            onClick={() => setShowHtml(true)}
+            className={
+              showHtml
+                ? "rounded-md bg-app-surface px-4 py-1.5 text-sm font-semibold text-brand-800 shadow-sm ring-1 ring-app-border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1"
+                : "rounded-md px-4 py-1.5 text-sm font-medium text-app-text-muted transition-colors hover:bg-white/70 hover:text-app-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1"
+            }
+          >
+            HTML
+          </button>
+        </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-5">
+
+      {/* Body */}
+      <div className="min-h-0 flex-1 overflow-auto bg-app-surface px-6 py-6 outreach-scrollbar">
         {showHtml ? (
-          <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: item.emailContent.htmlBody }} />
+          <div className="rounded-lg border border-app-border bg-white p-6 shadow-sm">
+            <div
+              className="max-w-5xl text-[15px] leading-7 text-app-text"
+              dangerouslySetInnerHTML={{ __html: item.emailContent.htmlBody }}
+            />
+          </div>
         ) : (
-          <pre className="whitespace-pre-wrap text-sm leading-relaxed text-gray-800">{item.emailContent.textBody}</pre>
+          <pre className="max-w-5xl whitespace-pre-wrap font-mono text-[14px] leading-7 text-app-text">
+            {item.emailContent.textBody}
+          </pre>
         )}
       </div>
     </div>
   );
 }
 
+// ---------------------------------------------------------------------------
+// Main page
+// ---------------------------------------------------------------------------
 type Step = "upload" | "preview" | "sent";
 
 export default function Home() {
@@ -121,23 +164,50 @@ export default function Home() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
+  // Step state helpers
+  const isCompleted = (s: Step) =>
+    (s === "upload" && (step === "preview" || step === "sent")) ||
+    (s === "preview" && step === "sent");
+  const isActive = (s: Step) => step === s;
+
   return (
-    <main className="flex min-h-screen flex-col bg-gray-50">
-      {/* Top bar */}
-      <header className="border-b bg-white px-6 py-4 shadow-sm">
+    <main className="flex min-h-screen flex-col bg-app-background text-app-text">
+
+      {/* ── Top bar ──────────────────────────────────────────────────────── */}
+      <header className="border-b border-app-border bg-app-surface px-6 py-4">
         <div className="mx-auto flex max-w-screen-xl items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-green-800">Fleur De Lis Renewal Outreach</h1>
-            <p className="text-xs text-gray-400">Insurance renewal email tool</p>
+            <h1 className="text-lg font-semibold tracking-tight text-brand-800">
+              Fleur De Lis Renewal Outreach
+            </h1>
+            <p className="mt-0.5 text-sm text-app-text-muted">Insurance renewal email tool</p>
           </div>
-          <ol className="flex items-center gap-3 text-sm">
+
+          {/* Step indicator */}
+          <ol className="flex items-center gap-2">
             {(["upload", "preview", "sent"] as Step[]).map((s, i) => (
               <li key={s} className="flex items-center gap-2">
-                {i > 0 && <span className="text-gray-300">›</span>}
-                <span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${step === s ? "bg-green-700 text-white" : (step === "preview" && s === "upload") || step === "sent" ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-400"}`}>
+                {i > 0 && <span className="h-px w-5 bg-app-border" aria-hidden />}
+                <span
+                  className={
+                    isActive(s)
+                      ? "flex size-7 items-center justify-center rounded-full bg-brand-700 text-xs font-semibold text-white ring-4 ring-brand-100"
+                      : isCompleted(s)
+                      ? "flex size-7 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700"
+                      : "flex size-7 items-center justify-center rounded-full bg-app-surface-subtle text-xs font-semibold text-app-text-muted"
+                  }
+                >
                   {i + 1}
                 </span>
-                <span className={step === s ? "font-semibold text-green-800" : "text-gray-400"}>
+                <span
+                  className={
+                    isActive(s)
+                      ? "text-sm font-semibold text-brand-800"
+                      : isCompleted(s)
+                      ? "text-sm font-medium text-app-text-secondary"
+                      : "text-sm font-medium text-app-text-muted"
+                  }
+                >
                   {s === "upload" ? "Upload" : s === "preview" ? "Review & Send" : "Done"}
                 </span>
               </li>
@@ -146,39 +216,58 @@ export default function Home() {
         </div>
       </header>
 
-      {/* STEP 1: Upload */}
+      {/* ── STEP 1: Upload ───────────────────────────────────────────────── */}
       {step === "upload" && (
         <div className="mx-auto mt-16 w-full max-w-lg px-4">
-          <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200">
-            <h2 className="mb-6 text-lg font-semibold text-gray-800">Upload recipient file &amp; choose outreach month</h2>
+          <div className="rounded-xl border border-app-border bg-app-surface p-8 shadow-sm">
+            <h2 className="mb-6 text-base font-semibold text-app-text">
+              Upload recipient file &amp; choose outreach month
+            </h2>
+
             <label className="mb-5 block">
-              <span className="mb-1 block text-sm font-medium text-gray-700">Recipient file (CSV or Excel)</span>
+              <span className="mb-1 block text-sm font-medium text-app-text-secondary">
+                Recipient file (CSV or Excel)
+              </span>
               <input
                 ref={fileInputRef}
                 type="file"
                 accept=".csv,.xlsx,.xlsm"
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                className="block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-700 file:mr-4 file:cursor-pointer file:rounded-l-lg file:border-0 file:bg-green-700 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-green-800"
+                className="block w-full cursor-pointer rounded-lg border border-app-border bg-app-surface-subtle text-sm text-app-text file:mr-4 file:cursor-pointer file:rounded-l-lg file:border-0 file:bg-brand-700 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-brand-800"
               />
-              {file && <p className="mt-1.5 text-xs text-green-700">{file.name} — {(file.size / 1024).toFixed(1)} KB</p>}
+              {file && (
+                <p className="mt-1.5 text-xs text-brand-700">
+                  {file.name} — {(file.size / 1024).toFixed(1)} KB
+                </p>
+              )}
             </label>
+
             <label className="mb-7 block">
-              <span className="mb-1 block text-sm font-medium text-gray-700">Outreach month</span>
+              <span className="mb-1 block text-sm font-medium text-app-text-secondary">
+                Outreach month
+              </span>
               <input
                 type="month"
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-600"
+                className="rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm text-app-text focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
-              <p className="mt-1 text-xs text-gray-400">
-                Matches closings whose anniversary is <strong className="text-gray-600">{friendlyMonth(month)}</strong> + 2 months.
+              <p className="mt-1 text-xs text-app-text-muted">
+                Matches closings whose anniversary is{" "}
+                <strong className="text-app-text-secondary">{friendlyMonth(month)}</strong> + 2 months.
               </p>
             </label>
-            {error && <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
+
+            {error && (
+              <div className="mb-4 rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
+                {error}
+              </div>
+            )}
+
             <button
               onClick={handlePreview}
               disabled={!file || loading}
-              className="w-full rounded-xl bg-green-700 py-3 font-semibold text-white shadow-sm transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-brand-700 px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:bg-brand-900 disabled:pointer-events-none disabled:bg-brand-300"
             >
               {loading ? "Parsing…" : "Preview Emails →"}
             </button>
@@ -186,42 +275,95 @@ export default function Home() {
         </div>
       )}
 
-      {/* STEP 2: Split-pane */}
+      {/* ── STEP 2: Split-pane preview ───────────────────────────────────── */}
       {step === "preview" && parseResult && (
         <div className="flex flex-1 flex-col overflow-hidden">
-          {/* Sub-header */}
-          <div className="border-b bg-white px-6 py-3">
-            <div className="mx-auto flex max-w-screen-xl flex-wrap items-center gap-4">
-              <div className="flex items-center gap-5 text-sm">
-                <span><strong className="text-green-700">{parseResult.eligible.length}</strong> <span className="text-gray-500">eligible</span></span>
-                <span><strong className="text-gray-500">{parseResult.totalRows}</strong> <span className="text-gray-400">total rows</span></span>
-                {parseResult.errors.length > 0 && <span><strong className="text-orange-500">{parseResult.errors.length}</strong> <span className="text-gray-400">errors</span></span>}
-                <span className="text-gray-400">{friendlyMonth(month)}</span>
+
+          {/* Toolbar */}
+          <div className="border-b border-app-border bg-app-surface px-6 py-4">
+            <div className="mx-auto flex max-w-screen-xl flex-wrap items-center gap-6 min-w-0">
+              {/* Metrics */}
+              <div className="flex min-w-0 flex-wrap items-center gap-6">
+                <span className="whitespace-nowrap">
+                  <span className="font-semibold tabular-nums text-brand-700">
+                    {parseResult.eligible.length}
+                  </span>{" "}
+                  <span className="text-sm text-app-text-secondary">eligible</span>
+                </span>
+                <span className="whitespace-nowrap">
+                  <span className="font-semibold tabular-nums text-app-text">
+                    {parseResult.totalRows}
+                  </span>{" "}
+                  <span className="text-sm text-app-text-secondary">total rows</span>
+                </span>
+                {parseResult.errors.length > 0 && (
+                  <span className="whitespace-nowrap">
+                    <span className="font-semibold tabular-nums text-danger-600">
+                      {parseResult.errors.length}
+                    </span>{" "}
+                    <span className="text-sm text-danger-700">errors</span>
+                  </span>
+                )}
+                <span className="text-sm font-medium text-app-text-muted">
+                  {friendlyMonth(month)}
+                </span>
               </div>
-              <div className="ml-auto flex items-center gap-3">
-                <button onClick={reset} className="rounded-lg border border-gray-300 px-4 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50">← Back</button>
+
+              {/* Actions */}
+              <div className="ml-auto flex shrink-0 items-center gap-3">
+                <button
+                  onClick={reset}
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-app-border bg-app-surface px-4 text-sm font-medium text-app-text-secondary shadow-sm transition-colors hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                >
+                  ← Back
+                </button>
                 {parseResult.eligible.length > 0 && (
                   <button
                     onClick={() => setShowConfirm(true)}
                     disabled={loading}
-                    className="rounded-lg bg-green-700 px-5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-green-800 disabled:opacity-50"
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-700 px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:bg-brand-900 disabled:pointer-events-none disabled:bg-brand-300"
                   >
                     {loading ? "Sending…" : `Send ${parseResult.eligible.length} Email(s) →`}
                   </button>
                 )}
               </div>
             </div>
-            {error && <div className="mx-auto mt-2 max-w-screen-xl rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700">{error}</div>}
+
+            {/* API error */}
+            {error && (
+              <div className="mx-auto mt-3 max-w-screen-xl rounded-lg border border-danger-200 bg-danger-50 px-4 py-2 text-sm text-danger-700">
+                {error}
+              </div>
+            )}
+
+            {/* Row errors / skips */}
             {(parseResult.errors.length > 0 || parseResult.skippedAlreadySent.length > 0) && (
-              <div className="mx-auto mt-2 max-w-screen-xl flex flex-wrap gap-4 text-sm">
+              <div className="mx-auto mt-3 max-w-screen-xl flex flex-wrap gap-3">
                 {parseResult.errors.length > 0 && (
-                  <details><summary className="cursor-pointer font-medium text-orange-700">{parseResult.errors.length} row error(s)</summary>
-                    <ul className="mt-1 text-orange-600">{parseResult.errors.map((e, i) => <li key={i} className="list-inside list-disc">{e}</li>)}</ul>
+                  <details className="flex-1 min-w-[200px]">
+                    <summary className="flex cursor-pointer items-center gap-2 rounded-lg border border-warning-200 bg-warning-50 px-4 py-2.5 text-sm font-medium text-warning-700 select-none">
+                      <svg className="size-4 shrink-0 text-warning-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                      </svg>
+                      {parseResult.errors.length} row error(s) require attention
+                    </summary>
+                    <ul className="mt-1 space-y-0.5 px-4 py-2 text-xs text-warning-700">
+                      {parseResult.errors.map((e, i) => (
+                        <li key={i} className="list-inside list-disc">{e}</li>
+                      ))}
+                    </ul>
                   </details>
                 )}
                 {parseResult.skippedAlreadySent.length > 0 && (
-                  <details><summary className="cursor-pointer font-medium text-blue-700">{parseResult.skippedAlreadySent.length} already-sent skip(s)</summary>
-                    <ul className="mt-1 text-blue-600">{parseResult.skippedAlreadySent.map((s, i) => <li key={i} className="list-inside list-disc">{s}</li>)}</ul>
+                  <details className="flex-1 min-w-[200px]">
+                    <summary className="flex cursor-pointer items-center gap-2 rounded-lg border border-info-600/20 bg-info-50 px-4 py-2.5 text-sm font-medium text-info-600 select-none">
+                      {parseResult.skippedAlreadySent.length} already-sent skip(s)
+                    </summary>
+                    <ul className="mt-1 space-y-0.5 px-4 py-2 text-xs text-info-600">
+                      {parseResult.skippedAlreadySent.map((s, i) => (
+                        <li key={i} className="list-inside list-disc">{s}</li>
+                      ))}
+                    </ul>
                   </details>
                 )}
               </div>
@@ -229,96 +371,150 @@ export default function Home() {
           </div>
 
           {/* Split pane */}
-          <div className="flex flex-1 overflow-hidden">
+          <div className="flex min-h-0 flex-1 bg-app-background">
             {/* Left: recipient list */}
-            <div className="w-[30%] flex-shrink-0 overflow-y-auto border-r bg-white">
-              <p className="px-4 py-2 text-xs text-gray-400">{parseResult.eligible.length} recipient(s) — click to preview</p>
-              <ul>
+            <aside className="w-[30%] min-w-[280px] max-w-[500px] border-r border-app-border bg-app-surface outreach-scrollbar overflow-y-auto">
+              <p className="border-b border-app-border-subtle px-4 py-3 text-xs font-medium text-app-text-muted">
+                {parseResult.eligible.length} recipient(s) — click to preview
+              </p>
+              <ul role="listbox" aria-label="Recipients">
                 {parseResult.eligible.map((item, i) => {
                   const active = selectedItem === item;
+                  const isCommercial =
+                    item.recipient.propertyType === "commercial" ||
+                    item.recipient.propertyType === "investment";
                   return (
-                    <li key={i}>
+                    <li key={i} role="option" aria-selected={active}>
                       <button
                         onClick={() => setSelectedItem(item)}
-                        className={`w-full border-l-4 px-4 py-3 text-left transition ${active ? "border-green-600 bg-green-50" : "border-transparent hover:bg-gray-50"}`}
+                        className={
+                          active
+                            ? "relative w-full border-b border-app-border-subtle border-l-4 border-l-brand-600 bg-brand-100 px-4 py-4 text-left transition-colors hover:bg-brand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
+                            : "relative w-full border-b border-app-border-subtle px-5 py-4 text-left transition-colors hover:bg-app-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
+                        }
                       >
-                        <p className={`truncate font-medium ${active ? "text-green-800" : "text-gray-800"}`}>
-                          {item.recipient.firstName || <em className="font-normal text-gray-400">Business</em>}
-                          {" "}<span className="text-xs font-normal text-gray-400">#{i + 1}</span>
+                        <p className={`truncate text-sm font-semibold ${active ? "text-brand-800" : "text-app-text"}`}>
+                          {item.recipient.firstName || (
+                            <em className="font-normal text-app-text-muted">Business</em>
+                          )}
+                          <span className="ml-1 text-xs font-normal text-app-text-muted">
+                            #{i + 1}
+                          </span>
                         </p>
-                        <p className="truncate text-xs text-gray-500">{item.recipient.email}</p>
-                        <p className="truncate text-xs text-gray-400">{item.recipient.propertyAddress}</p>
-                        <div className="mt-1 flex items-center gap-2">
-                          <span className={`rounded-full px-1.5 py-0.5 text-xs font-medium ${item.recipient.propertyType === "commercial" || item.recipient.propertyType === "investment" ? "bg-amber-100 text-amber-700" : "bg-green-100 text-green-700"}`}>
+                        <p className="mt-0.5 truncate text-xs font-medium leading-5 text-app-text-secondary">
+                          {item.recipient.email}
+                        </p>
+                        <p className="truncate text-xs text-app-text-muted">
+                          {item.recipient.propertyAddress}
+                        </p>
+                        <div className="mt-1.5 flex items-center gap-2">
+                          <span
+                            className={
+                              isCommercial
+                                ? "inline-flex items-center rounded-full bg-info-50 px-2 py-0.5 text-[11px] font-medium text-info-600 ring-1 ring-inset ring-info-600/20"
+                                : "inline-flex items-center rounded-full bg-success-100 px-2 py-0.5 text-[11px] font-medium text-success-700 ring-1 ring-inset ring-success-200"
+                            }
+                          >
                             {item.recipient.propertyType}
                           </span>
-                          <span className="text-xs text-gray-400">{item.renewalCycle}</span>
+                          <span className="text-xs tabular-nums text-app-text-muted">
+                            {item.renewalCycle}
+                          </span>
                         </div>
                       </button>
                     </li>
                   );
                 })}
               </ul>
-            </div>
+            </aside>
 
-            {/* Right: preview */}
-            <div className="w-[70%] overflow-hidden bg-gray-50">
+            {/* Right: email preview */}
+            <main className="min-w-0 w-[70%] overflow-hidden bg-app-surface">
               {selectedItem ? (
                 <EmailPreviewPanel item={selectedItem} />
               ) : (
-                <div className="flex h-full items-center justify-center text-gray-400">Select a recipient on the left to preview their email.</div>
+                <div className="flex h-full items-center justify-center text-sm text-app-text-muted">
+                  Select a recipient on the left to preview their email.
+                </div>
               )}
-            </div>
+            </main>
           </div>
         </div>
       )}
 
-      {/* STEP 3: Sent */}
+      {/* ── STEP 3: Sent ─────────────────────────────────────────────────── */}
       {step === "sent" && sendResult && (
-        <div className="mx-auto mt-16 w-full max-w-lg space-y-6 px-4">
-          <div className="rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
+        <div className="mx-auto mt-16 w-full max-w-lg space-y-5 px-4">
+          <div className="rounded-xl border border-app-border bg-app-surface p-10 text-center shadow-sm">
             <div className="mb-4 text-5xl">✅</div>
-            <h2 className="text-2xl font-bold text-green-800">Done!</h2>
-            <p className="mt-2 text-gray-600">
-              <strong className="text-green-700">{sendResult.sent}</strong> email(s) sent successfully.
-              {sendResult.failed.length > 0 && <span className="text-red-600"> {sendResult.failed.length} failed.</span>}
+            <h2 className="text-xl font-semibold text-brand-800">Done!</h2>
+            <p className="mt-2 text-sm text-app-text-secondary">
+              <strong className="font-semibold tabular-nums text-brand-700">
+                {sendResult.sent}
+              </strong>{" "}
+              email(s) sent successfully.
+              {sendResult.failed.length > 0 && (
+                <span className="text-danger-600"> {sendResult.failed.length} failed.</span>
+              )}
             </p>
           </div>
+
           {sendResult.failed.length > 0 && (
-            <div className="rounded-2xl bg-red-50 p-5 ring-1 ring-red-200">
-              <h3 className="mb-3 font-semibold text-red-800">Failed sends</h3>
-              <ul className="space-y-2 text-sm text-red-700">
+            <div className="rounded-xl border border-danger-200 bg-danger-50 p-5">
+              <h3 className="mb-3 text-sm font-semibold text-danger-700">Failed sends</h3>
+              <ul className="space-y-2 text-sm text-danger-700">
                 {sendResult.failed.map((f, i) => (
-                  <li key={i}><strong>{f.email}</strong> — {f.address}<br /><span className="text-xs">{f.error}</span></li>
+                  <li key={i}>
+                    <strong>{f.email}</strong> — {f.address}
+                    <br />
+                    <span className="text-xs">{f.error}</span>
+                  </li>
                 ))}
               </ul>
             </div>
           )}
-          <button onClick={reset} className="w-full rounded-xl bg-green-700 py-3 font-semibold text-white shadow-sm hover:bg-green-800">
+
+          <button
+            onClick={reset}
+            className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-brand-700 px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:bg-brand-900"
+          >
             Send Another Batch
           </button>
         </div>
       )}
 
-      {/* Send confirmation dialog */}
+      {/* ── Send confirmation dialog ──────────────────────────────────────── */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
-            <h3 className="mb-2 text-lg font-bold text-gray-900">Confirm Send</h3>
-            <p className="mb-4 text-sm text-gray-600">
-              This will send <strong className="text-green-700">{parseResult?.eligible.length} real email(s)</strong> to recipients. Type <strong>SEND</strong> to confirm.
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-xl border border-app-border bg-app-surface p-8 shadow-xl">
+            <h3 className="mb-2 text-base font-semibold text-app-text">Confirm Send</h3>
+            <p className="mb-4 text-sm text-app-text-secondary">
+              This will send{" "}
+              <strong className="font-semibold text-brand-700">
+                {parseResult?.eligible.length} real email(s)
+              </strong>{" "}
+              to recipients. Type <strong>SEND</strong> to confirm.
             </p>
             <input
               type="text"
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
               placeholder="Type SEND"
-              className="mb-4 w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="mb-4 w-full rounded-lg border border-app-border bg-app-surface px-4 py-2 text-sm text-app-text focus:outline-none focus:ring-2 focus:ring-brand-500"
               autoFocus
             />
             <div className="flex gap-3">
-              <button onClick={() => { setShowConfirm(false); setConfirmText(""); }} className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50">Cancel</button>
-              <button onClick={handleSend} disabled={confirmText !== "SEND" || loading} className="flex-1 rounded-xl bg-green-700 py-2.5 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-40">
+              <button
+                onClick={() => { setShowConfirm(false); setConfirmText(""); }}
+                className="inline-flex h-10 flex-1 items-center justify-center rounded-lg border border-app-border bg-app-surface text-sm font-medium text-app-text-secondary transition-colors hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSend}
+                disabled={confirmText !== "SEND" || loading}
+                className="inline-flex h-10 flex-1 items-center justify-center rounded-lg bg-brand-700 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:bg-brand-900 disabled:pointer-events-none disabled:bg-brand-300"
+              >
                 Confirm &amp; Send
               </button>
             </div>
