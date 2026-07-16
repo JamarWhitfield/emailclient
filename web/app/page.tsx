@@ -353,6 +353,7 @@ export default function Home() {
             {/* Recipient table */}
             {parseResult.eligible.length > 0 ? (
               <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200">
+                <p className="px-4 pt-3 text-xs text-gray-400">Click any row to preview that email.</p>
                 <table className="w-full text-sm">
                   <thead className="bg-green-700 text-left text-xs font-semibold uppercase tracking-wide text-white">
                     <tr>
@@ -362,15 +363,19 @@ export default function Home() {
                       <th className="px-4 py-3">Property Address</th>
                       <th className="px-4 py-3">Renewal Cycle</th>
                       <th className="px-4 py-3">Type</th>
-                      <th className="px-4 py-3"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {parseResult.eligible.map((item, i) => (
-                      <tr key={i} className="hover:bg-gray-50">
+                      <tr
+                        key={i}
+                        onClick={() => setPreviewItem(item)}
+                        className="cursor-pointer hover:bg-green-50"
+                        title="Click to preview email"
+                      >
                         <td className="px-4 py-3 text-gray-400">{i + 1}</td>
-                        <td className="px-4 py-3 font-medium text-gray-800">
-                          {item.recipient.firstName || <em className="text-gray-400">Business</em>}
+                        <td className="px-4 py-3 font-medium text-green-700 underline decoration-dotted underline-offset-2">
+                          {item.recipient.firstName || <em className="text-gray-400 no-underline">Business</em>}
                         </td>
                         <td className="px-4 py-3 text-gray-600">{item.recipient.email}</td>
                         <td className="px-4 py-3 text-gray-600">{item.recipient.propertyAddress}</td>
@@ -386,14 +391,6 @@ export default function Home() {
                           >
                             {item.recipient.propertyType}
                           </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <button
-                            onClick={() => setPreviewItem(item)}
-                            className="rounded-lg border border-gray-200 px-3 py-1 text-xs text-gray-600 hover:bg-gray-100"
-                          >
-                            Preview
-                          </button>
                         </td>
                       </tr>
                     ))}
