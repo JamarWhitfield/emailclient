@@ -13,18 +13,9 @@ export async function POST(request: NextRequest) {
   }
 
   const file = formData.get("file") as File | null;
-  const month = (formData.get("month") as string | null) ?? "";
 
   if (!file) {
     return NextResponse.json({ error: "No file uploaded." }, { status: 400 });
-  }
-
-  // Validate month format
-  if (!/^\d{4}-\d{2}$/.test(month)) {
-    return NextResponse.json(
-      { error: "month must be in YYYY-MM format." },
-      { status: 400 }
-    );
   }
 
   // Validate file type
@@ -39,7 +30,7 @@ export async function POST(request: NextRequest) {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
-  const result = parseRecipients(buffer, file.name, month);
+  const result = parseRecipients(buffer, file.name);
 
   return NextResponse.json(result);
 }

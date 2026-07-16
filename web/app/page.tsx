@@ -3,19 +3,6 @@
 import { useState, useRef } from "react";
 import type { EligibleRecipient, ParseResult, SendResult } from "@/types";
 
-function todayMonth(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-}
-
-function friendlyMonth(yyyyMM: string): string {
-  const [y, m] = yyyyMM.split("-");
-  return new Date(Number(y), Number(m) - 1, 1).toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-}
-
 // ---------------------------------------------------------------------------
 // Email preview panel (right pane)
 // ---------------------------------------------------------------------------
@@ -98,7 +85,6 @@ type Step = "upload" | "preview" | "sent";
 export default function Home() {
   const [step, setStep] = useState<Step>("upload");
   const [file, setFile] = useState<File | null>(null);
-  const [month, setMonth] = useState(todayMonth());
   const [parseResult, setParseResult] = useState<ParseResult | null>(null);
   const [sendResult, setSendResult] = useState<SendResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -115,7 +101,6 @@ export default function Home() {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      fd.append("month", month);
       const res = await fetch("/api/parse", { method: "POST", body: fd });
       const data = (await res.json()) as ParseResult & { error?: string };
       if (!res.ok || data.error) { setError(data.error ?? "Unexpected error."); return; }
@@ -221,7 +206,7 @@ export default function Home() {
         <div className="mx-auto mt-16 w-full max-w-lg px-4">
           <div className="rounded-xl border border-app-border bg-app-surface p-8 shadow-sm">
             <h2 className="mb-6 text-base font-semibold text-app-text">
-              Upload recipient file &amp; choose outreach month
+              Upload recipient file
             </h2>
 
             <label className="mb-5 block">
@@ -240,22 +225,6 @@ export default function Home() {
                   {file.name} — {(file.size / 1024).toFixed(1)} KB
                 </p>
               )}
-            </label>
-
-            <label className="mb-7 block">
-              <span className="mb-1 block text-sm font-medium text-app-text-secondary">
-                Outreach month
-              </span>
-              <input
-                type="month"
-                value={month}
-                onChange={(e) => setMonth(e.target.value)}
-                className="rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm text-app-text focus:outline-none focus:ring-2 focus:ring-brand-500"
-              />
-              <p className="mt-1 text-xs text-app-text-muted">
-                Matches closings whose anniversary is{" "}
-                <strong className="text-app-text-secondary">{friendlyMonth(month)}</strong> + 2 months.
-              </p>
             </label>
 
             {error && (
@@ -304,9 +273,6 @@ export default function Home() {
                     <span className="text-sm text-danger-700">errors</span>
                   </span>
                 )}
-                <span className="text-sm font-medium text-app-text-muted">
-                  {friendlyMonth(month)}
-                </span>
               </div>
 
               {/* Actions */}

@@ -327,17 +327,10 @@ function getRenewalCycle(recipient: Recipient, expectedRenewalMonth: Date): stri
  */
 export function parseRecipients(
   fileBuffer: Buffer,
-  filename: string,
-  targetMonth: string,
-  sentKeys: Set<string> = new Set()
+  filename: string
 ): ParseResult {
   const errors: string[] = [];
   const skippedAlreadySent: string[] = [];
-
-  // Parse target month
-  const [yearStr, monthStr] = targetMonth.split("-");
-  const targetDate = new Date(Number(yearStr), Number(monthStr) - 1, 1);
-  const expectedRenewalMonth = addMonths(targetDate, 2);
 
   // Read file
   let fieldnames: string[];
@@ -406,20 +399,11 @@ export function parseRecipients(
     }
   }
 
-  // Build eligible list
+  // All valid recipients are eligible — no month filtering
   const eligible: EligibleRecipient[] = [];
 
   for (const recipient of recipients) {
-    const renewalCycle = getRenewalCycle(recipient, expectedRenewalMonth);
-    if (renewalCycle === null) continue;
-
-    const sentKey = `${recipient.email.toLowerCase()}|${normalizeAddress(recipient.propertyAddress)}|${renewalCycle}`;
-    if (sentKeys.has(sentKey)) {
-      skippedAlreadySent.push(
-        `${recipient.email} (${recipient.propertyAddress}) — already sent for ${renewalCycle}`
-      );
-      continue;
-    }
+    const renewalCycle = recipient.closingDate;
 
     eligible.push({
       recipient,
